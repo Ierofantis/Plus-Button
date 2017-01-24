@@ -11,7 +11,7 @@
       <script> 
 var socket = io();
     socket.on('counts',function(c)
-  { document.getElementById("success").innerHTML = "Your Health is" + "&nbsp" + c + "";      }  )
+  { document.getElementById("health").innerHTML = "Your Health is" + "&nbsp" + c + "";      }  )
   </script>
    <h1>Sword Buttons</h1>
 <div class="container">
@@ -19,19 +19,18 @@ var socket = io();
     <div class="col-md-4">
       <button type="button" id="war" class="btn btn-danger">War!</button>
       <div id="1">You have to hit the war button</div>
-      <div id="1">Until He dies</div>      
-
+      <div id="1">Until He dies</div> 
     </div>
     <div class="col-md-4">
       <button type="button" id="success" class="btn btn-success">Defend</button>
       <div id="1">You have to push Defend button</div>
-      <div id="1">to defend yourself</div>      <h2 id="health"></h2>
+      <div id="1">to defend yourself</div> 
+       <h1 id="health"></h1>   
     </div>
  <div class="col-md-4">
       <button type="button" id="resign" class="btn btn-warning">Resign</button>
-      <div id="1">I Quit button</div>
-    
-    </div>
+      <div id="1">I Quit button</div>    
+    </div>    
   </div>
 </div>
  
