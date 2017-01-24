@@ -1,4 +1,4 @@
-# Socket_Game
-Socket game/Rogue on NodeJs/Socket.io
+# Sword Buttons
+Socket game/Battle on NodeJs/Socket.io
 
 In progress
