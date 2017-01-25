@@ -1,7 +1,15 @@
 body {
   color:#557a4c;  
 }
-h1,
+h1,h2,
 h3 {
   text-align: center;
 }
+
+.btn-danger{
+	margin-top:10px;
+} 
+
+.btn-success{
+	margin-top:10px;
+} 
