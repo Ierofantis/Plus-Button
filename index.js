@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+app.use(express.static(__dirname + '/public'));
 var bodyParser = require('body-parser');
 var http = require('http').Server(app);
 var path = require('path');
@@ -7,16 +8,13 @@ var io = require('socket.io')(http);
 var mongoose = require('mongoose');
 var sword = require("./models/signup");
 var cookieParser = require('cookie-parser');
-var expressSession = require('express-session')
-app.use(express.static(__dirname + '/public'));
+var expressSession = require('express-session');
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs"); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(expressSession({secret:'bla2'}));
-
 app.use(cookieParser('bla2'));
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs"); 
-
 
 mongoose.connect("mongodb://localhost/games", function (error){
 	
@@ -85,8 +83,8 @@ app.get("/defend/:emails", function(req, res, next) {
     console.log(user);
     res.render("defend.ejs", { user: user });
 
-        });
-    });
+  });
+});
 
 // app.get('/defend/', function(req, res){
 //     var emails = req.params.emails;
@@ -101,6 +99,7 @@ app.get("/defend/:emails", function(req, res, next) {
 
   
 // });
+
 var numClients = 0;
 
 io.on('connection', function(socket){
