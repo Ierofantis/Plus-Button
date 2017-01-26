@@ -4,8 +4,10 @@
   "description": "socket",
   "dependencies": {
     "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.5.5",
-    "express": "4.10.2",    
+    "express": "4.10.2",
+    "express-session": "^1.15.0",
     "mongoose": "^4.7.8",
     "nodemon": "^1.11.0",
     "socket.io": "1.2.0"
