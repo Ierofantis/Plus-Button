@@ -62,7 +62,7 @@ app.post('/login', function(req, res){
 });
 
 app.post('/log', function(req, res){
-  var emails = req.body.username;
+  var emails = req.params.username;
   var password = req.body.password; 
   if (req.session.user)
   return res.redirect('/defend/' + emails + '');

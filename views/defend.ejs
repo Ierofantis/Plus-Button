@@ -13,7 +13,7 @@
 <div class="container">
   <div class="row ">
     <div class="col-md-4">
-    <button type="button" onclick="sendMessage()" id="war" class="btn btn-danger">War!</button>
+    <button type="button" onclick="sendMessages()" id="war" class="btn btn-danger">War!</button>
       <div id="1">You have to hit the war button </div>   
       <div id="1">Until <strong><%=user.emails%> </strong> dies</div> 
     </div>        
@@ -36,8 +36,6 @@
   <button onclick="setRoom()">Set Room</button>
 </div>
 <div>
-  <input id="message" name = "message" type="text"/>
-  <button onclick="sendMessage()">Send Message</button>
 </div> 
 </div>
  <script> 
@@ -63,17 +61,29 @@
      // // clear message input box
      // $message.value = ''
    }
+ function sendMessages () {
+     // send message
+     var $message = document.getElementById('health')
+     count--
+     socket.emit('message', count)
 
+     // add to page
+     // const $p = document.createElement("p")
+     // $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
+     // document.body.appendChild($p)
+     // // clear message input box
+     // $message.value = ''
+   }
 
  socket.on('counts',function(c) {
   $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
  
 
-$( "#success" ).click(function() { 
-   count++
-   socket.emit('counts', count );
+// $( "#success" ).click(function() { 
+//    count++
+//    socket.emit('counts', count );
 
-});
+// });
 
 $( "#war" ).click(function() {
   count--
@@ -100,13 +110,13 @@ $( "#war" ).click(function() {
 
   function sendMessage () {
     // send message
+     count++
     
-    const $message = document.getElementById('health')
-    socket.emit('message', $message.value)
+    socket.emit('message',count)
     // add to page
     const $p = document.createElement("p")
-    $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
-    document.body.appendChild($p)
+    $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )
+    //document.body.appendChild($p)
     // clear message input box
     $message.value = ''
   }
