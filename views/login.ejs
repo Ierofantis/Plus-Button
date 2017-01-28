@@ -10,29 +10,52 @@
 
    <h1>Sword Buttons</h1>
 
-    <div class="wrapper">
-    <form action="/login" method="post" class="form-signin">       
-      <h2 class="form-signin-heading">Please Signup</h2>
-      <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
-      <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>      
-      <label class="checkbox">
-        <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
-      </label>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button>   
-    </form>
-    
-    <h1> <a href="players">Enter</a> </h1>
-</div>
-<div class="wrapper">
-<form action="/log" method="post" class="form-signin">       
-      <h2 class="form-signin-heading">Please login</h2>
-      <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
-      <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>      
-      <label class="checkbox">
-        <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
-      </label>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">login</button>   
-    </form>
+   <div class="form-wrap">
+    <div class="tabs">
+      <h3 class="signup-tab"><a class="active" href="#signup-tab-content">Sign Up</a></h3>
+      <h3 class="login-tab"><a href="#login-tab-content">Login</a></h3>
+    </div><!--.tabs-->
+
+    <div class="tabs-content">
+      <div id="signup-tab-content" class="active">
+        <form class="signup-form" action="/login" method="post">
+          <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
+      <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>     
+          <input type="submit" class="button" value="Sign Up">
+        </form><!--.login-form-->
+        <div class="help-text">
+          <p>By signing up, you agree to our</p>
+          <p><a href="#">Terms of service</a></p>
+        </div><!--.help-text-->
+      </div><!--.signup-tab-content-->
+
+      <div id="login-tab-content">
+        <form class="login-form" action="/log" method="post">
+         <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
+      <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>   
+       <input type="submit" class="button" value="Login"> 
+        </form><!--.login-form-->
+        <div class="help-text">
+          <p><a href="#">Forget your password?</a></p>
+        </div><!--.help-text-->
+      </div><!--.login-tab-content-->
+    </div><!--.tabs-content-->
+  </div><!--.form-wrap-->
     </div>
-    </body>   
+    </body>
+    <script>
+      jQuery(document).ready(function($) {
+      tab = $('.tabs h3 a');
+
+      tab.on('click', function(event) {
+        event.preventDefault();
+        tab.removeClass('active');
+        $(this).addClass('active');
+
+        tab_content = $(this).attr('href');
+        $('div[id$="tab-content"]').removeClass('active');
+        $(tab_content).addClass('active');
+    });
+  });
+    </script>   
     </html>

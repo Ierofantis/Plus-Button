@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded());
 app.use(expressSession({secret:'bla2'}));
 app.use(cookieParser('bla2'));
 
-mongoose.connect("mongodb://localhost/gamess", function (error){	
+mongoose.connect("mongodb://localhost/blabla", function (error){	
 	if (error) console.error(error);
 	else console.log("mongo connected")
 });
@@ -62,7 +62,7 @@ app.post('/login', function(req, res){
 });
 
 app.post('/log', function(req, res){
-  var emails = req.params.username;
+  var emails = req.body.username;
   var password = req.body.password; 
   if (req.session.user)
   return res.redirect('/defend/' + emails + '');

@@ -48,32 +48,6 @@
 
   var count=5;
  
-   function sendMessage () {
-     // send message
-     var $message = document.getElementById('health')
-     count++
-     socket.emit('message', count)
-
-     // add to page
-     // const $p = document.createElement("p")
-     // $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
-     // document.body.appendChild($p)
-     // // clear message input box
-     // $message.value = ''
-   }
- function sendMessages () {
-     // send message
-     var $message = document.getElementById('health')
-     count--
-     socket.emit('message', count)
-
-     // add to page
-     // const $p = document.createElement("p")
-     // $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
-     // document.body.appendChild($p)
-     // // clear message input box
-     // $message.value = ''
-   }
 
  socket.on('counts',function(c) {
   $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
@@ -85,21 +59,13 @@
 
 // });
 
-$( "#war" ).click(function() {
-  count--
-  socket.emit('counts', count );
-  if(count==0){  
-  alert("game over")
-  return count=5
-  }
-});
  socket.on('connect', function onConnect () {
     console.log(`Connected as ${socket.id}`)
   })
 
   socket.on('message', function onMessage (message) {
     // add received message to page
-    const $p = document.createElement("p")
+    var $p = document.createElement("p")
     $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}`))
     document.body.appendChild($p)
   })
@@ -114,10 +80,13 @@ $( "#war" ).click(function() {
     
     socket.emit('message',count)
     // add to page
-    const $p = document.createElement("p")
+    var $p = document.createElement("p")
     $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )
     //document.body.appendChild($p)
     // clear message input box
+    if(count===10){
+      alert('win press the button')
+    }
     $message.value = ''
   }
 
