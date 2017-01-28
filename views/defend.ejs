@@ -13,14 +13,14 @@
 <div class="container">
   <div class="row ">
     <div class="col-md-4">
-    <button type="button" onclick="sendMessages()" id="war" class="btn btn-danger">War!</button>
-      <div id="1">You have to hit the war button </div>   
-      <div id="1">Until <strong><%=user.emails%> </strong> dies</div> 
+    <input id="room" type="text"/>
+    <button type="button" onclick="setRoom()" id="war" class="btn btn-danger">Set Room</button>
+      <div id="1">Create a Room </div>      
     </div>        
   
     <div class="col-md-4">    
-      <button onclick="sendMessage()" type="button" id="success" class="btn btn-success">Defend</button>
-      <div id="1">You have to push Defend button <strong> <%= user.emails %></strong></div>
+      <button onclick="sendMessage()" type="button" id="success" class="btn btn-success">Plus</button>
+      <div id="1">You have to push the Plus button to win <strong> <%= user.emails %></strong></div>
       <div id="1">to defend yourself</div> 
        <h1 id="health"></h1>   
     </div>
@@ -31,9 +31,7 @@
   </div>
 </div> 
  <div class="row ">
-    <div class="col-md-4">
-  <input id="room" type="text"/>
-  <button onclick="setRoom()">Set Room</button>
+    <div class="col-md-4"> 
 </div>
 <div>
 </div> 
