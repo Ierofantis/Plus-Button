@@ -16,11 +16,9 @@ app.use(bodyParser.urlencoded());
 app.use(expressSession({secret:'bla2'}));
 app.use(cookieParser('bla2'));
 
-mongoose.connect("mongodb://localhost/games", function (error){
-	
+mongoose.connect("mongodb://localhost/gamess", function (error){	
 	if (error) console.error(error);
 	else console.log("mongo connected")
-
 });
 
 app.get('/', function(req, res){
@@ -41,68 +39,81 @@ app.get('/players', function(req, res){
 });
 
 app.get('/players/:emails/', function(req, res){
-   //var emails = req.params.username;
+  
     var password = req.body.password;
     sword.find({}, function(err, user) {
-
-        if (err) return next(err);
-       
-        res.render("war.ejs", { user: user });
+        if (err) return next(err);       
+        res.render("main.ejs", { user: user });
     }); 
 });
 
 app.post('/login', function(req, res){
 	var emails = req.body.username;
-    var password = req.body.password;	
+  var password = req.body.password;	
 
 	 var s = new sword({emails: emails, password: password });     
 
      s.save(function(err, newUser) {
-
      req.session.user = emails
      if (err) return next(err);         
-     console.log(req.session.user);
-    // res.redirect('/defend/' + emails + '');
+     console.log(req.session.user);    
     res.redirect('/defend/' + emails + '');
    });
+});
+
+app.post('/log', function(req, res){
+  var emails = req.body.username;
+  var password = req.body.password; 
+  if (req.session.user)
+  return res.redirect('/defend/' + emails + '');
 });
 
 app.get('/error', function(req, res){	
 	res.render('error');
 });
 
-
 app.get("/defend/:emails", function(req, res, next) {
 
-    var emails = req.params.emails;                
+    var emails = req.params.emails; 
+     req.session.user = emails               
     console.log('req.body',req.params);
 
-    sword.findOne({ emails:emails }, function(err, user) {
-    //req.session.user = emails;
+    sword.findOne({ emails:emails }, function(err, user) {  
     if (err) return next(err);
     console.log(user);
     res.render("defend.ejs", { user: user });
-
   });
 });
-
-// app.get('/defend/', function(req, res){
-//     var emails = req.params.emails;
-//     var name = req.session.user;
-//     sword.find({name:name}, function(err, user) {
-//     req.session.user = emails;
-
-//      console.log(user);
-//      return res.redirect('/defend/' + emails + '');
-
-//      }); 
-
-  
-// });
 
 var numClients = 0;
 
 io.on('connection', function(socket){
+console.log(`${socket.id} connected.`)
+  // each socket can be in only one room in addition to its socket.id room
+  var currentRoom = 'default'
+  socket.join(currentRoom)
+
+  socket.on('move to room', function moveToRoom (newRoom) {
+    socket.leave(currentRoom)
+    socket.join(newRoom)
+    currentRoom = newRoom
+    socket.emit('message', {
+      sender: '***SERVER***',
+      content: `You moved to room ${newRoom}`
+    })
+  })
+
+  socket.on('message', function onReceiveMessage (message) {
+    socket.to(currentRoom).emit('message', {
+      sender: socket.id,
+      content: message
+    })
+    console.log(`Relayed "${message}" from ${socket.id} to #${currentRoom}`)
+  })
+
+  socket.on('disconnect', function onDisconnect (socket) {
+    console.log(`${socket.id} disconnected.`)
+  })
 
    numClients++;
 
@@ -110,19 +121,12 @@ io.on('connection', function(socket){
    console.log('Connected clients:', numClients);   	
      
     socket.on('disconnect', function() {
-
         numClients--;
-
         io.emit('stats', { numClients: numClients });
         console.log('Connected clients:', numClients);
     });
   
-	socket.on('counts', function(c){
-    io.emit('counts', c);
-    console.log(c)
-  });
 });
-
 
 http.listen(3000, function(){
 	console.log('listening on *:3000');

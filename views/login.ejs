@@ -12,7 +12,7 @@
 
     <div class="wrapper">
     <form action="/login" method="post" class="form-signin">       
-      <h2 class="form-signin-heading">Please login</h2>
+      <h2 class="form-signin-heading">Please Signup</h2>
       <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
       <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>      
       <label class="checkbox">
@@ -20,8 +20,19 @@
       </label>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Signup</button>   
     </form>
+    
     <h1> <a href="players">Enter</a> </h1>
 </div>
-
+<div class="wrapper">
+<form action="/log" method="post" class="form-signin">       
+      <h2 class="form-signin-heading">Please login</h2>
+      <input type="text" class="form-control" name="username" id="username" placeholder="Email Address" required="true" autofocus="" />
+      <input type="password" class="form-control" name="password" id="password" placeholder="Password" required="true"/>      
+      <label class="checkbox">
+        <input type="checkbox" value="remember-me" id="rememberMe" name="rememberMe"> Remember me
+      </label>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">login</button>   
+    </form>
+    </div>
     </body>   
     </html>

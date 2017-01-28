@@ -9,12 +9,17 @@
       </head>
     <body>  
    <h1>Sword Buttons</h1>
+    <h1><a href="/players">Players</li></a></h1>
 <div class="container">
   <div class="row ">
-    <div class="col-md-4">     
-    </div>
     <div class="col-md-4">
-      <button type="button" id="success" class="btn btn-success">Defend</button>
+    <button type="button" onclick="sendMessage()" id="war" class="btn btn-danger">War!</button>
+      <div id="1">You have to hit the war button </div>   
+      <div id="1">Until <strong><%=user.emails%> </strong> dies</div> 
+    </div>        
+  
+    <div class="col-md-4">    
+      <button onclick="sendMessage()" type="button" id="success" class="btn btn-success">Defend</button>
       <div id="1">You have to push Defend button <strong> <%= user.emails %></strong></div>
       <div id="1">to defend yourself</div> 
        <h1 id="health"></h1>   
@@ -25,19 +30,43 @@
     </div>    
   </div>
 </div> 
+ <div class="row ">
+    <div class="col-md-4">
+  <input id="room" type="text"/>
+  <button onclick="setRoom()">Set Room</button>
+</div>
+<div>
+  <input id="message" name = "message" type="text"/>
+  <button onclick="sendMessage()">Send Message</button>
+</div> 
+</div>
  <script> 
     var socket = io();
-
-    socket.on('counts',function(c)
-  { 
-    document.getElementById("health").innerHTML = "Your Health is" + "&nbsp" + c + "";
-  })
+  
+  //   socket.on('counts',function(c)
+  // { 
+  //   document.getElementById("health").innerHTML = "Your Health is" + "&nbsp" + c + "";
+  // })
 
   var count=5;
-  var socket = io();
-  
-  socket.on('counts',function(c) {
-    $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
+ 
+   function sendMessage () {
+     // send message
+     var $message = document.getElementById('health')
+     count++
+     socket.emit('message', count)
+
+     // add to page
+     // const $p = document.createElement("p")
+     // $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
+     // document.body.appendChild($p)
+     // // clear message input box
+     // $message.value = ''
+   }
+
+
+ socket.on('counts',function(c) {
+  $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
  
 
 $( "#success" ).click(function() { 
@@ -52,26 +81,36 @@ $( "#war" ).click(function() {
   if(count==0){  
   alert("game over")
   return count=5
-
   }
 });
+ socket.on('connect', function onConnect () {
+    console.log(`Connected as ${socket.id}`)
+  })
 
-// jQuery.fn.extend({
-//     disable: function(state) {
-//         return this.each(function() {
-//             var $this = $(this);
-//             $this.toggleClass('disabled', state);
-//         });
-//     }
-// });
+  socket.on('message', function onMessage (message) {
+    // add received message to page
+    const $p = document.createElement("p")
+    $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}`))
+    document.body.appendChild($p)
+  })
 
-// $( "#war" ).click(function() {
-//   $('#success').disable(true);
-// });
+  function setRoom () {
+    socket.emit('move to room', document.getElementById('room').value)
+  }
 
-// $( "#success" ).click(function() {
-//   $('#war').disable(true);
-// });
+  function sendMessage () {
+    // send message
+    
+    const $message = document.getElementById('health')
+    socket.emit('message', $message.value)
+    // add to page
+    const $p = document.createElement("p")
+    $p.appendChild(document.createTextNode(`YOU: ${$message.value}`))
+    document.body.appendChild($p)
+    // clear message input box
+    $message.value = ''
+  }
+
   </script>
     </body>       
     </html>
