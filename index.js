@@ -10,129 +10,134 @@ var sword = require("./models/signup");
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs"); 
+app.set("view engine", "ejs");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use(expressSession({secret:'bla2'}));
+app.use(expressSession({ secret: 'bla2' }));
 app.use(cookieParser('bla2'));
 
-mongoose.connect("mongodb://localhost/blabla", function (error){	
-	if (error) console.error(error);
-	else console.log("mongo connected")
+mongoose.connect("mongodb://localhost/blabla", function(error) {
+
+    if (error) console.error(error);
+    else console.log("mongo connected")
 });
 
-app.get('/', function(req, res){
-	res.render('login');
+app.get('/', function(req, res) {
+    res.render('login');
 });
 
-app.get('/players', function(req, res){
+app.get('/players', function(req, res) {
     var emails = req.body.username;
     var password = req.body.password;
-    var sess = req.session.user
-    sword.find()
-    .sort({ createdAt: "descending" })
-    .exec(function(err, user) {
+    var sess = req.session.user;
 
-        if (err) return next(err);        
-        res.render("players.ejs", { user: user, sess:sess });
-    }); 
+    sword.find()
+        .sort({ createdAt: "descending" })
+        .exec(function(err, user) {
+
+            if (err) return next(err);
+            res.render("players.ejs", { user: user, sess: sess });
+        });
 });
 
-app.get('/players/:emails/', function(req, res){
-  
+app.get('/players/:emails/', function(req, res) {
+
     var password = req.body.password;
     sword.find({}, function(err, user) {
-        if (err) return next(err);       
+      
+        if (err) return next(err);
         res.render("main.ejs", { user: user });
-    }); 
+    });
 });
 
-app.post('/login', function(req, res){
-	var emails = req.body.username;
-  var password = req.body.password;	
+app.post('/login', function(req, res) {
+    var emails = req.body.username;
+    var password = req.body.password;
 
-	 var s = new sword({emails: emails, password: password });     
+    var s = new sword({ emails: emails, password: password });
 
-     s.save(function(err, newUser) {
-     req.session.user = emails
-     if (err) return next(err);         
-     console.log(req.session.user);    
-    res.redirect('/defend/' + emails + '');
-   });
+    s.save(function(err, newUser) {
+
+        req.session.user = emails;
+
+        if (err) return next(err);        
+        res.redirect('/defend/' + emails + '');
+    });
 });
 
-app.post('/log', function(req, res){
-   var emails = req.session.user;
-  // var password = req.body.password; 
-  if (req.session.user){
-      sword.findOne({ emails:emails }, function(err, user) {  
-    if (user)
+app.post('/log', function(req, res) {
+    var emails = req.session.user;
     
-     return res.redirect('/defend/' + emails + '');
-  });
-  }
+    if (req.session.user) {
+        sword.findOne({ emails: emails }, function(err, user) {
+
+            if (user)
+                return res.redirect('/defend/' + emails + '');
+        });
+    }
 });
 
-app.get('/error', function(req, res){	
-	res.render('error');
+app.get('/error', function(req, res) {
+    res.render('error');
 });
 
 app.get("/defend/:emails", function(req, res, next) {
 
-    var emails = req.params.emails; 
-    req.session.user = emails
-    sword.findOne({ emails:emails }, function(err, user) {  
-    if (err) return next(err);
-    
-    res.render("defend.ejs", { user: user });
-  });
+    var emails = req.params.emails;
+    req.session.user = emails;
+
+    sword.findOne({ emails: emails }, function(err, user) {
+
+        if (err) return next(err);
+        res.render("defend.ejs", { user: user });
+    });
 });
 
 var numClients = 0;
 
-io.on('connection', function(socket){
-console.log(`${socket.id} connected.`)
-  // each socket can be in only one room in addition to its socket.id room
-  var currentRoom = 'default'
-  socket.join(currentRoom)
+io.on('connection', function(socket) {
+    console.log(`${socket.id} connected.`);
+    // each socket can be in only one room in addition to its socket.id room
+    var currentRoom = 'default';
+    socket.join(currentRoom);
 
-  socket.on('move to room', function moveToRoom (newRoom) {
-   
-    socket.leave(currentRoom)
-    socket.join(newRoom)
-    currentRoom = newRoom
-       
-    socket.emit('message', {
-      sender: '***SERVER***',
-      content: `You moved to room ${newRoom}`
-      
+    socket.on('move to room', function moveToRoom(newRoom) {
+
+        socket.leave(currentRoom);
+        socket.join(newRoom);
+
+        currentRoom = newRoom;
+        
+        socket.emit('message', {
+            sender: '***SERVER***',
+            content: `You moved to room ${newRoom}`
+        })
     })
-  })
 
-  socket.on('message', function onReceiveMessage (message) {
-    socket.to(currentRoom).emit('message', {
-      sender: socket.id,
-      content: message
+    socket.on('message', function onReceiveMessage(message) {
+        socket.to(currentRoom).emit('message', {
+            sender: socket.id,
+            content: message
+        })
+        console.log(`Relayed "${message}" from ${socket.id} to #${currentRoom}`)
     })
-    console.log(`Relayed "${message}" from ${socket.id} to #${currentRoom}`)
-  })
 
-  socket.on('disconnect', function onDisconnect (socket) {
-    console.log(`${socket.id} disconnected.`)
-  })
+    socket.on('disconnect', function onDisconnect(socket) {
+        console.log(`${socket.id} disconnected.`)
+    })
 
-   numClients++;
+    numClients++;
 
-   io.emit('stats', { numClients: numClients });   
-   console.log('Connected clients:', numClients);   	
-     
+    io.emit('stats', { numClients: numClients });
+    console.log('Connected clients:', numClients);
+
     socket.on('disconnect', function() {
         numClients--;
         io.emit('stats', { numClients: numClients });
         console.log('Connected clients:', numClients);
-    });  
+    });
 });
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+http.listen(3000, function() {
+    console.log('listening on *:3000');
 });
