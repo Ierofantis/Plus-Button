@@ -4,12 +4,31 @@
   <title>Web Sockets</title>
   <script src="/socket.io/socket.io.js"></script>
   <link href="/game.css" rel="stylesheet" type="text/css">
+  <link href="/nav.css" rel="stylesheet" type="text/css">
+  <link href="/code.css" rel="stylesheet" type="text/css">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>     
 </head>
 <body>
+    <div id="container">
+  <ul>
+  <li><a href="/players">Back</a></li>
+  <li><a href="#">About</a></li>  
+  <li><a href="#">News</a></li> 
+  <li><a href="#">Contact</a></li>
+
+</ul>
  <h1>Sword Buttons</h1>
 <h2>Send the code to play</h2>
-
+<div id="main">
+  <p id="code">#000969015</p>
+  <div id="inset">
+    <p>   
+    <p>
+      <input type="password" placeholder="Password">
+      <input type="submit" value="Send">
+    </p>
+  </div>
+</div>
 </body>
 </html>

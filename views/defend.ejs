@@ -3,19 +3,29 @@
   <head>
     <title>Button Swords</title>
     <link href="/game.css" rel="stylesheet" type="text/css">
+    <link href="/nav.css" rel="stylesheet" type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
       </head>
     <body>  
+      <div id="container">
+  <ul>
+  <li><a href="/players">Players</a></li>
+  <li><a href="#">About</a></li>  
+  <li><a href="#">News</a></li> 
+  <li><a href="#">Contact</a></li>
+
+</ul>
    <h1>Sword Buttons</h1>
-    <h1><a href="/players">Players</li></a></h1>
+    <h1><a href="/players">Home</li></a></h1>
 <div class="container">
   <div class="row ">
     <div class="col-md-4">
-    <input id="room" type="text"/>
+    
+     <input id="room" type="text"/>
     <button type="button" onclick="setRoom()" id="war" class="btn btn-danger">Set Room</button>
-      <div id="1">Create a Room </div>      
+      <div id="1">Create a Room </div>        
     </div>        
   
     <div class="col-md-4">    
@@ -37,26 +47,12 @@
 </div> 
 </div>
  <script> 
-    var socket = io();
-  
-  //   socket.on('counts',function(c)
-  // { 
-  //   document.getElementById("health").innerHTML = "Your Health is" + "&nbsp" + c + "";
-  // })
-
+  var socket = io();
   var count=5;
  
 
  socket.on('counts',function(c) {
   $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
- 
-
-// $( "#success" ).click(function() { 
-//    count++
-//    socket.emit('counts', count );
-
-// });
-
  socket.on('connect', function onConnect () {
     console.log(`Connected as ${socket.id}`)
   })
@@ -64,7 +60,7 @@
   socket.on('message', function onMessage (message) {
     // add received message to page
     var $p = document.createElement("p")
-    $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}`))
+    $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}: ${message.nump[0]}`))
     document.body.appendChild($p)
   })
 
@@ -77,12 +73,10 @@
      count++
     
     socket.emit('message',count)
-    // add to page
+    
     var $p = document.createElement("p")
-    $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )
-    //document.body.appendChild($p)
-    // clear message input box
-    if(count===10){
+    $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )  
+    if(count===100){
       alert('win press the button')
     }
     $message.value = ''

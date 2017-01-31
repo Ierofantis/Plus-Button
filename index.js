@@ -97,12 +97,16 @@ console.log(`${socket.id} connected.`)
   socket.join(currentRoom)
 
   socket.on('move to room', function moveToRoom (newRoom) {
+    num=0;
+    var ar=[];
     socket.leave(currentRoom)
     socket.join(newRoom)
-    currentRoom = newRoom
+    currentRoom = newRoom    
+   
     socket.emit('message', {
       sender: '***SERVER***',
       content: `You moved to room ${newRoom}`
+      
     })
   })
 

@@ -3,28 +3,43 @@
   <head>
     <title>Button Swords</title>
     <link href="/game.css" rel="stylesheet" type="text/css">
+    <link href="/nav.css" rel="stylesheet" type="text/css">
+    <link href="/members.css" rel="stylesheet" type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     </head>
     <body>   
       <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>       
    <script>
-    var socket = io();
+
     </script>
+    <div id="container">
+  <ul>
+  <li><a href="defend/<%= sess%>">Home</a></li>
+  <li><a href="#">About</a></li>  
+  <li><a href="#">News</a></li> 
+  <li><a href="#">Contact</a></li>
+
+</ul>
+</div>    
    <h1>Sword Buttons</h1>
-  <a href="defend/<%= sess%>"> <h1></li>ggg</a></h1>
+  <a href="defend/<%= sess%>"> <h1></li>My Profile</a></h1>
    <h2>Board of the warriors</h2>
    <div class="container">
   <div class="row">
   <% user.forEach(function(users) { %>
-   <ul class="list-group">
-   <li class="list-group-item">
-   <a href="players/<%= users.emails %>"><%= users.emails %></li>  
+  <div class="wrap">
+    <div class="s1_3">
+      <div class="in">
+   <a href="players/<%= users.emails %>"><%= users.emails %></a>
+    </div>
+    </div>
+  </div>
    <% }) %> 
 </ul>
   </div>
 </div> 
-    </body>
+  </body>
     <script src="game.js"> </script>
     </html>
 
