@@ -28,13 +28,13 @@ app.get('/', function(req, res){
 app.get('/players', function(req, res){
     var emails = req.body.username;
     var password = req.body.password;
+    var sess = req.session.user
     sword.find()
     .sort({ createdAt: "descending" })
     .exec(function(err, user) {
 
-        if (err) return next(err);
-        console.log(req.session.user);
-        res.render("players.ejs", { user: user });
+        if (err) return next(err);        
+        res.render("players.ejs", { user: user, sess:sess });
     }); 
 });
 
@@ -62,10 +62,15 @@ app.post('/login', function(req, res){
 });
 
 app.post('/log', function(req, res){
-  var emails = req.body.username;
-  var password = req.body.password; 
-  if (req.session.user)
-  return res.redirect('/defend/' + emails + '');
+   var emails = req.session.user;
+  // var password = req.body.password; 
+  if (req.session.user){
+      sword.findOne({ emails:emails }, function(err, user) {  
+    if (user)
+    
+     return res.redirect('/defend/' + emails + '');
+  });
+  }
 });
 
 app.get('/error', function(req, res){	
@@ -75,12 +80,10 @@ app.get('/error', function(req, res){
 app.get("/defend/:emails", function(req, res, next) {
 
     var emails = req.params.emails; 
-     req.session.user = emails               
-    console.log('req.body',req.params);
-
+    req.session.user = emails
     sword.findOne({ emails:emails }, function(err, user) {  
     if (err) return next(err);
-    console.log(user);
+    
     res.render("defend.ejs", { user: user });
   });
 });
@@ -124,8 +127,7 @@ console.log(`${socket.id} connected.`)
         numClients--;
         io.emit('stats', { numClients: numClients });
         console.log('Connected clients:', numClients);
-    });
-  
+    });  
 });
 
 http.listen(3000, function(){
