@@ -12,6 +12,7 @@
       <div id="container">
   <ul>
   <li><a href="/players">Players</a></li>
+  <li><a href="/">Login</a></li> 
   <li><a href="#">About</a></li>  
   <li><a href="#">News</a></li> 
   <li><a href="#">Contact</a></li>
@@ -60,7 +61,7 @@
   socket.on('message', function onMessage (message) {
     // add received message to page
     var $p = document.createElement("p")
-    $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}: ${message.nump[0]}`))
+    $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}`))
     document.body.appendChild($p)
   })
 
