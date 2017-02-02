@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-app.use(express.static(__dirname + '/public'));
 var bodyParser = require('body-parser');
 var http = require('http').Server(app);
 var path = require('path');
@@ -9,14 +8,17 @@ var mongoose = require('mongoose');
 var sword = require("./models/signup");
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(expressSession({ secret: 'bla2' }));
 app.use(cookieParser('bla2'));
 
-mongoose.connect("mongodb://localhost/blabla", function(error) {
+mongoose.connect("mongodb://localhost/blablas", function(error) {
 
     if (error) console.error(error);
     else console.log("mongo connected")
@@ -44,7 +46,7 @@ app.get('/players/:emails/', function(req, res) {
 
     var password = req.body.password;
     sword.find({}, function(err, user) {
-      
+
         if (err) return next(err);
         res.render("main.ejs", { user: user });
     });
@@ -60,16 +62,21 @@ app.post('/login', function(req, res) {
 
         req.session.user = emails;
 
-        if (err) return next(err);        
+        if (err)
+            return next(err);
+
         res.redirect('/defend/' + emails + '');
     });
 });
 
 app.post('/log', function(req, res) {
     var emails = req.session.user;
-    
+
     if (req.session.user) {
         sword.findOne({ emails: emails }, function(err, user) {
+
+            if (err)
+                return next(err);
 
             if (user)
                 return res.redirect('/defend/' + emails + '');
@@ -94,6 +101,7 @@ app.get("/defend/:emails", function(req, res, next) {
 });
 
 var numClients = 0;
+var rooms = [];
 
 io.on('connection', function(socket) {
     console.log(`${socket.id} connected.`);
@@ -107,7 +115,26 @@ io.on('connection', function(socket) {
         socket.join(newRoom);
 
         currentRoom = newRoom;
-        
+        rooms.push(newRoom)        
+   
+       function countInArray(array, value) {
+        var count = 0;
+        var index = array.indexOf(value);
+        for (var i = 0; i < array.length; i++) {
+            if (array[i] === value) {
+                count++;
+            }
+            if(count>2){
+              socket.leave(newRoom);
+              array.splice(index, 1);
+              console.log('sorry')
+            }
+        }       
+    }      
+
+     countInArray(rooms, newRoom)
+     console.log(rooms)
+
         socket.emit('message', {
             sender: '***SERVER***',
             content: `You moved to room ${newRoom}`
@@ -124,6 +151,11 @@ io.on('connection', function(socket) {
 
     socket.on('disconnect', function onDisconnect(socket) {
         console.log(`${socket.id} disconnected.`)
+    })
+
+    socket.on('chat message', function(s) {
+        io.emit('chat message', s);
+
     })
 
     numClients++;

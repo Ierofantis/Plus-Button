@@ -10,9 +10,14 @@
     <body>   
       <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>       
-   <script>
+ <script type="text/javascript">
+   var socket = io();
 
-    </script>
+    socket.emit('chat message', '<%= sess%>');
+     socket.on('chat message', function(s){        
+        $("#mylistgroup").append("<li class='list-group-item'>"+s+"</li>");
+      });
+ </script>
     <div id="container">
   <ul>
   <li><a href="defend/<%= sess%>">Home</a></li>
@@ -38,6 +43,15 @@
   </div>
    <% }) %> 
 </ul>
+  </div>
+  <div class="row">
+  <h1>Users Online</h1>  
+ <ul id="mylistgroup" class="list-group"> 
+</ul>
+  </div> 
+    <div class="row">
+  <h1>Play a random game</h1>  
+  </div> 
   </div>
 </div> 
   </body>
