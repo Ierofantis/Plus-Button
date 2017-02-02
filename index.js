@@ -125,7 +125,7 @@ io.on('connection', function(socket) {
                 count++;
             }
             if(count>2){
-              socket.leave(newRoom);
+              //socket.leave(value);
               array.splice(index, 1);
               console.log('sorry')
             }
