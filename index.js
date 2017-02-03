@@ -91,63 +91,90 @@ app.get('/error', function(req, res) {
 app.get("/defend/:emails", function(req, res, next) {
 
     var emails = req.params.emails;
-    req.session.user = emails;
+    var sess = req.session.user;
 
     sword.findOne({ emails: emails }, function(err, user) {
 
         if (err) return next(err);
-        res.render("defend.ejs", { user: user });
+        res.render("defend.ejs", { user: user, sess: sess });
     });
 });
 
 var numClients = 0;
 var rooms = [];
+var queue = []; 
 
-io.on('connection', function(socket) {
+io.on('connection', function(socket) {   
+      
     console.log(`${socket.id} connected.`);
     // each socket can be in only one room in addition to its socket.id room
     var currentRoom = 'default';
-    socket.join(currentRoom);
+    socket.join(currentRoom); 
+    
+    queue.push(socket); 
+    //var peer = queue.pop();
+    //peer.join(currentRoom); 
+    // socket.on('move to room', function moveToRoom(newRoom) {
 
-    socket.on('move to room', function moveToRoom(newRoom) {
+    //     socket.leave(currentRoom);
+    //     socket.join(newRoom);
 
+    //     currentRoom = newRoom;
+    //     rooms.push(newRoom)
+    
+
+  socket.on('move to room', function moveToRoom(newRoom) {
+
+        var peer = queue.pop();
+        console.log("peer"+peer.id)
+        console.log("socket"+socket.id)
         socket.leave(currentRoom);
-        socket.join(newRoom);
-
+       
+       // peer.leave(currentRoom);
+        
         currentRoom = newRoom;
-        rooms.push(newRoom)        
-   
-       function countInArray(array, value) {
-        var count = 0;
-        var index = array.indexOf(value);
-        for (var i = 0; i < array.length; i++) {
-            if (array[i] === value) {
-                count++;
-            }
-            if(count>2){
-              //socket.leave(value);
-              array.splice(index, 1);
-              console.log('sorry')
-            }
-        }       
-    }      
 
-     countInArray(rooms, newRoom)
-     console.log(rooms)
+        socket.join(newRoom)
+       
+        peer.join(newRoom)
+       
+        rooms.push(newRoom)
+                 
+    //    function countInArray(array, value) {
+    //     var count = 0;
+    //     var index = array.indexOf(value);
+    //     for (var i = 0; i < array.length; i++) {
+    //         if (array[i] === value) {
+    //             count++;
+    //         }
+    //         if(count>2){
+    //           //socket.leave(value);
+    //           array.splice(index, 1);
+    //           console.log('sorry')
+    //         }
+    //     }       
+    // }      
+
+    //  countInArray(rooms, newRoom)
 
         socket.emit('message', {
-            sender: '***SERVER***',
-            content: `You moved to room ${newRoom}`
-        })
-    })
-
-    socket.on('message', function onReceiveMessage(message) {
-        socket.to(currentRoom).emit('message', {
             sender: socket.id,
+            content: `You moved to room ${newRoom}`       
+       }) 
+           peer.emit('message', {
+            sender: socket.id,
+             content: `You have a calling from ${newRoom}`
+       })
+   })        
+  
+       socket.on('message', function onReceiveMessage(message) {
+        socket.to(currentRoom).emit('message', {
+            sender: socket.id ,         
             content: message
         })
         console.log(`Relayed "${message}" from ${socket.id} to #${currentRoom}`)
     })
+    
 
     socket.on('disconnect', function onDisconnect(socket) {
         console.log(`${socket.id} disconnected.`)
@@ -155,7 +182,6 @@ io.on('connection', function(socket) {
 
     socket.on('chat message', function(s) {
         io.emit('chat message', s);
-
     })
 
     numClients++;

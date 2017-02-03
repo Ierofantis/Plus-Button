@@ -36,8 +36,6 @@
        <h1 id="health"></h1>   
     </div>
  <div class="col-md-4">
-      <button type="button" id="resign" class="btn btn-warning">Resign</button>
-      <div id="1">I Quit button</div>    
     </div>    
   </div>
 </div> 
@@ -50,7 +48,6 @@
  <script> 
   var socket = io();
   var count=5;
- 
 
  socket.on('counts',function(c) {
   $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
@@ -74,7 +71,7 @@
      count++
     
     socket.emit('message',count)
-    
+  
     var $p = document.createElement("p")
     $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )  
     if(count===100){
