@@ -70,19 +70,16 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/log', function(req, res) {
-    var emails = req.session.user;
-
-    if (req.session.user) {
+    var emails = req.body.username;
+    
         sword.findOne({ emails: emails }, function(err, user) {
 
             if (err)
                 return next(err);
-
             if (user)
                 return res.redirect('/defend/' + emails + '');
-        });
-    }
-});
+        });  
+  });
 
 app.get('/error', function(req, res) {
     res.render('error');
