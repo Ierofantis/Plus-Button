@@ -87,7 +87,7 @@ app.post('/log', function(req, res) {
             else
                 return res.redirect('/error')
         });    
- });
+    });
 
   app.get('/logout', function(req, res) {
 
@@ -125,8 +125,22 @@ var numClients = 0;
 var rooms = [];
 var queue = []; 
 
-io.on('connection', function(socket) {   
-      
+io.on('connection', function(socket) {  
+
+       socket.on('message',function(c) {
+        if(c===20){
+        var newMsg = new sword({code: c});
+        newMsg.save(function(err){
+            if(err){
+                console.log(err);
+            }else{
+                io.emit('message', c);                
+                console.log('saved: ' +''+ c);
+            }
+        });
+     }
+  })
+
     console.log(`${socket.id} connected.`);
     // each socket can be in only one room in addition to its socket.id room
     var currentRoom = 'default';
@@ -207,6 +221,7 @@ io.on('connection', function(socket) {
     })
 
     numClients++;
+
 
     io.emit('stats', { numClients: numClients });
     console.log('Connected clients:', numClients);

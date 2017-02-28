@@ -1,9 +1,9 @@
 var mongoose = require("mongoose");
 
 var swordSchema = mongoose.Schema({	
-	password: {type: String,required: true},	
-	emails: {type: String,required: true},	
-	code: {type: String},	
+	password: {type: String},	
+	emails: {type: String},	
+	code: {type: Number},	
 	createdAt: { type: Date, default: Date.now }	
 });
 

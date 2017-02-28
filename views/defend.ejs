@@ -38,7 +38,7 @@
       <button onclick="sendMessage()" type="button" id="success" class="btn btn-success">Plus</button>
       <div id="1">You have to push the Plus button to win <strong> <%= user.emails %></strong></div>
       <div id="1">to defend yourself</div> 
-       <h1 id="health"></h1>   
+       <h1 id="health"></h1>  
     </div>
  <div class="col-md-4">
  <div class="glass">
@@ -91,13 +91,14 @@
     socket.emit('message',count)
   
     var $p = document.createElement("p")
+    
     $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" ) 
         $('.water').animate({
          height: count
       }) 
-    if(count===100){
-      alert( 'you won!!!')      
-    }
+    if(count===20){
+      alert( ' You won!')      
+     }
     $message.value = ''
   }
  document.getElementById("success").disabled = true;
