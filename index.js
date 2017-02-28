@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded());
 app.use(expressSession({ secret: 'bla2' }));
 app.use(cookieParser('bla2'));
 
-mongoose.connect("mongodb://localhost/blablas", function(error) {
+mongoose.connect("mongodb://localhost/blablass", function(error) {
 
     if (error) console.error(error);
     else console.log("mongo connected")
@@ -52,6 +52,11 @@ app.get('/players/:emails/', function(req, res) {
     });
 });
 
+app.get('/error', function(req, res) {
+
+        res.render("error.ejs");
+    });
+
 app.post('/login', function(req, res) {
     var emails = req.body.username;
     var password = req.body.password;
@@ -70,18 +75,33 @@ app.post('/login', function(req, res) {
 });
 
 app.post('/log', function(req, res) {
-    var emails = req.session.user;
-
-    if (req.session.user) {
+    var emails = req.body.username;
+    
         sword.findOne({ emails: emails }, function(err, user) {
 
             if (err)
                 return next(err);
-
+           req.session.user = emails;
             if (user)
                 return res.redirect('/defend/' + emails + '');
-        });
-    }
+            else
+                return res.redirect('/error')
+        });    
+ });
+
+  app.get('/logout', function(req, res) {
+
+                req.session.user = null;
+                res.redirect("/")
+            });
+  
+app.post('/code', function(req, res) {
+    var code = req.body.code;
+    var emails =  req.params.emails;
+
+        sword.findOne({  }, function(err, user) {            
+          return res.redirect('/defend/' + emails + '');
+        });    
 });
 
 app.get('/error', function(req, res) {
@@ -89,11 +109,12 @@ app.get('/error', function(req, res) {
 });
 
 app.get("/defend/:emails", function(req, res, next) {
-
+    
+    var code=req.body.code
     var emails = req.params.emails;
     var sess = req.session.user;
 
-    sword.findOne({ emails: emails }, function(err, user) {
+    sword.findOne({ emails: emails,code:code }, function(err, user) {
 
         if (err) return next(err);
         res.render("defend.ejs", { user: user, sess: sess });
@@ -162,7 +183,7 @@ io.on('connection', function(socket) {
             content: `You moved to room ${newRoom}`       
        }) 
            peer.emit('message', {
-            sender: socket.id,
+             sender: socket.id,
              content: `You have a calling from ${newRoom}`
        })
    })        
@@ -182,6 +203,7 @@ io.on('connection', function(socket) {
 
     socket.on('chat message', function(s) {
         io.emit('chat message', s);
+        
     })
 
     numClients++;

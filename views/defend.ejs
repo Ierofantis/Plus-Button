@@ -4,25 +4,30 @@
     <title>Button Swords</title>
     <link href="/game.css" rel="stylesheet" type="text/css">
     <link href="/nav.css" rel="stylesheet" type="text/css">
+    <link href="/water.css" rel="stylesheet" type="text/css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+     
       </head>
     <body>  
       <div id="container">
   <ul>
   <li><a href="/players">Players</a></li>
   <li><a href="/">Login</a></li> 
-  <li><a href="#">About</a></li>  
-  <li><a href="#">News</a></li> 
+  <li><a href="/logout">Logout</a></li>  
+  <li><a href="#">About</a></li> 
   <li><a href="#">Contact</a></li>
-
 </ul>
+
    <h1>Sword Buttons</h1>
-    <h1><a href="/players">Home</li></a></h1>
-<div class="container">
-  <div class="row ">
-    <div class="col-md-4">
+
+    <h1><a href="/players">Home</li></a>
+    </h1>
+  <div class="container">
+    <div class="row ">
+     <div class="col-md-4">
     
      <input id="room" type="text"/>
     <button type="button" onclick="setRoom()" id="war" class="btn btn-danger">Set Room</button>
@@ -36,6 +41,9 @@
        <h1 id="health"></h1>   
     </div>
  <div class="col-md-4">
+ <div class="glass">
+    <div class="water"></div>
+</div>
     </div>    
   </div>
 </div> 
@@ -46,26 +54,36 @@
 </div> 
 </div>
  <script> 
-  var socket = io();
-  var count=5;
 
+ var socket = io();
+ var count=1;
+ var water=1;
  socket.on('counts',function(c) {
-  $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )})
+  $( "#health" ).html( "Health ==>" + "&nbsp" + c + "" )
+
+  $('.water').animate({
+       height: c
+      })
+})
+ 
  socket.on('connect', function onConnect () {
     console.log(`Connected as ${socket.id}`)
   })
 
   socket.on('message', function onMessage (message) {
-    // add received message to page
+    // add received message to page         
     var $p = document.createElement("p")
+
     $p.appendChild(document.createTextNode(`${message.sender}: ${message.content}`))
     document.body.appendChild($p)
-  })
+
+  })   
 
   function setRoom () {
     socket.emit('move to room', document.getElementById('room').value)
+    document.getElementById("success").disabled = false;
   }
-
+  
   function sendMessage () {
     // send message
      count++
@@ -73,12 +91,16 @@
     socket.emit('message',count)
   
     var $p = document.createElement("p")
-    $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" )  
+    $( "#health" ).html( "Health ==>" + "&nbsp" + count + "" ) 
+        $('.water').animate({
+         height: count
+      }) 
     if(count===100){
-      alert('win press the button')
+      alert( 'you won!!!')      
     }
     $message.value = ''
   }
+ document.getElementById("success").disabled = true;
 
   </script>
     </body>       
